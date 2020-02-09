@@ -2,12 +2,8 @@ import express, { Response, Request } from "express";
 import mongoose from 'mongoose';
 import session from 'express-session';
 import connectMongo from 'connect-mongo';
-import cookieParser from 'cookie-parser';
 import {config, BASE_PATH} from './lib/config';
-import authMDW from './lib/middleware/auth';
-import adminRourer from './routes/admin';
-import indexRouter from './routes/index';
-import userRouter from './routes/user';
+import router from './routes/router';
 import l10nMDW from "./lib/middleware/l10n";
 
 const port: number = config.appPort;
@@ -42,14 +38,8 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-
+router(app);
 app.use(l10nMDW);
-app.use('/', indexRouter);
-app.use('/user', userRouter);
-app.use('/admin', authMDW, adminRourer)
 
 app.disable('x-powered-by');
 // start the express server
