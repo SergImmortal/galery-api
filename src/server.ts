@@ -4,7 +4,6 @@ import session from 'express-session';
 import connectMongo from 'connect-mongo';
 import {config, BASE_PATH} from './lib/config';
 import router from './routes/router';
-import l10nMDW from "./lib/middleware/l10n";
 
 const port: number = config.appPort;
 const app = express();
@@ -39,7 +38,6 @@ app.use(session({
 }));
 
 router(app);
-app.use(l10nMDW);
 
 app.disable('x-powered-by');
 // start the express server
