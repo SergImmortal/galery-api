@@ -1,8 +1,8 @@
-import express, { Response, Request } from "express";
+import express from "express";
 import mongoose from 'mongoose';
 import session from 'express-session';
 import connectMongo from 'connect-mongo';
-import {config, BASE_PATH} from './lib/config';
+import {config} from './lib/config';
 import router from './routes/router';
 
 const port: number = config.appPort;
@@ -21,8 +21,7 @@ let options: any = {
 };
 
 mongoose.connect(`mongodb://localhost:27017/admin`,options);
-const db: mongoose.Connection = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 
 // Server session
 var MongoStore = connectMongo(session);

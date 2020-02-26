@@ -5,9 +5,9 @@ export type PageDocument = Document & {
     title: string,
     data: object,
     lang: string,
-    meta: string,
+    meta?: string,
 };
-
+  
 const pageSchema = new Schema({
     path: {
         type: String,

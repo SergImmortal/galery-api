@@ -39,6 +39,47 @@ echo "-= Folder /var/www cleaned =-"
 sudo ln -s /home/vagrant /var/www
 echo "-= Symlink for /var/www => /home/vagrant created =-"
 
+#POSTGRESQL
+echo "-= Installing psql =-";
+
+sudo apt-get install -y postgresql postgresql-contrib
+
+echo "-= get version psql =-"
+ver="$(sudo psql --version)"
+ver_number="$(echo $ver | cut -d' ' -f3)"
+ver_major="$(echo $ver_number | cut -d'.' -f1)"
+ver_minor="$(echo $ver_number | cut -d'.' -f2)"
+
+pconf_path=""
+pconf_path_m="$(echo /etc/postgresql/$ver_major/main/postgresql.conf)"
+pconf_path_mm="$(echo /etc/postgresql/$ver_major.$ver_minor/main/postgresql.conf)"
+
+if [ -f $pconf_path_m ]; then
+	ver=$ver_major
+	pconf_path=$pconf_path_m
+else
+	ver=$ver_major.$ver_minor
+	pconf_path=$pconf_path_mm
+fi
+
+echo "-= fix permission, fixing listen_addresses on postgresql.conf =-"
+sudo sed -i "s/#listen_address.*/listen_addresses '*'/" $pconf_path
+
+echo "-= fixing postgres pg_hba.conf file, replace the ipv4 host line with the bottom line =-"
+var="cat >> /etc/postgresql/$ver/main/pg_hba.conf <<EOF
+# Accept all IPv4 connections - FOR DEVELOPMENT ONLY!!!
+host    all         all         0.0.0.0/0             md5
+EOF"
+echo $var
+sudo bash -c "$var"
+
+echo "-= create role(super user) vagrant:vagrant =-"
+sudo su postgres -c "psql -c \"CREATE ROLE vagrant SUPERUSER LOGIN PASSWORD 'vagrant'\" "
+sudo su postgres -c "createdb -E UTF8 -T template0 --locale=en_US.utf8 -O vagrant vagrant"
+
+echo "-= psql restart =-"
+sudo /etc/init.d/postgresql restart
+
 #  Install MongoDB
 wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | sudo apt-key add -
 echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list
