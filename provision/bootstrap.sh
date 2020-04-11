@@ -80,25 +80,35 @@ sudo su postgres -c "createdb -E UTF8 -T template0 --locale=en_US.utf8 -O vagran
 echo "-= psql restart =-"
 sudo /etc/init.d/postgresql restart
 
-#  Install MongoDB
-wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | sudo apt-key add -
-echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list
-sudo apt-get update
-sudo apt-get install -y mongodb-org
-sudo service mongod stop
-sudo sed -i 's/bindIp\: 127\.0\.0\.1/bindIp\: 0\.0\.0\.0/' /etc/mongod.conf
-cat <<EOT >> /etc/mongod.conf
-security:
-  authorization: "enabled"
-EOT
-sudo service mongod start
-sleep 10
-# Create MongoDB user
-echo "-= Create db user =-";
-mongo admin --eval "db.createUser({ user: '$dbUser', pwd: '$dbPwd', roles: [{role: 'root', db: 'admin'}]});"
-echo "-= Created db user =-";
-echo "-= MongoDB installed =-"
-
+# Redis
+echo "-= Start installing REDIS =-"
+sudo mkdir /etc/redis
+sudo mkdir /var/redis
+sudo apt install -y redis-server
+sudo apt install -y redis-tools
+sudo cp /tmp/redis-conf/redis.conf /etc/redis/redis.conf
+sudo chmod -R 777 /var/redis
+sleep 1
+systemctl stop redis-server
+adduser --system --group --no-create-home redis
+mkdir /var/lib/redis
+chown redis:redis /var/lib/redis
+chmod 770 /var/lib/redis
+cp /tmp/redis-conf/redis.service /etc/systemd/system/redis.service
+sudo echo -n > /etc/redis/redis.confe
+echo "maxmemory 52mb" >> /etc/redis/redis.confe
+echo "maxmemory-policy allkeys_lfu" >> /etc/redis/redis.confe
+sudo systemctl start redis-server
+sudo systemctl enable redis-server
+sleep 1
+if [[ "$( echo 'ping' | /usr/bin/redis-cli )" == "PONG" ]] ; then
+    echo "ping worked"
+else
+    echo "ping FAILED"
+fi
+sudo systemctl status redis
+sudo systemctl status redis-server
+echo "-= REDIS installed =-"
 # Node JS install
 # Node JS cleanup
 sudo apt remove --purge nodejs npm
