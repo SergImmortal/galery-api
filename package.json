@@ -25,7 +25,9 @@
     "express-validator": "^6.3.1",
     "js-yaml": "^3.13.1",
     "pg": "^7.18.2",
-    "redis": "^3.0.2"
+    "pg-hstore": "^2.3.3",
+    "redis": "^3.0.2",
+    "sequelize": "^5.21.6"
   },
   "devDependencies": {
     "@types/async": "^3.2.0",

@@ -26,8 +26,9 @@ Vagrant.configure(2) do |config|
     
     config.vm.provision "shell", path: "provision/bootstrap.sh", :args => [
     configuration["timezone"],
-    configuration["db"]["user"],
-    configuration["db"]["password"]
+    configuration["pgql"]["user"],
+    configuration["pgql"]["password"],
+    configuration["pgql"]["name"]
    ],
    privileged: true
    config.vm.provision :shell, path: "provision/start-server.sh", run: "always", privileged: false

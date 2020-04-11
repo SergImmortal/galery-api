@@ -3,6 +3,7 @@
 timezone=$1
 dbUser=$2
 dbPwd=$3
+dbName=$4
 
 echo "-= Start build =-";
 # OS config
@@ -73,9 +74,9 @@ EOF"
 echo $var
 sudo bash -c "$var"
 
-echo "-= create role(super user) vagrant:vagrant =-"
-sudo su postgres -c "psql -c \"CREATE ROLE vagrant SUPERUSER LOGIN PASSWORD 'vagrant'\" "
-sudo su postgres -c "createdb -E UTF8 -T template0 --locale=en_US.utf8 -O vagrant vagrant"
+echo "-= create role(super user) $dbUser:$dbPwd =-"
+sudo su postgres -c "psql -c \"CREATE ROLE $dbUser SUPERUSER LOGIN PASSWORD '$dbPwd'\" "
+sudo su postgres -c "createdb $dbName  -E UTF8 -T template0 --locale=en_US.utf8 -O $dbUser $dbPwd"
 
 echo "-= psql restart =-"
 sudo /etc/init.d/postgresql restart
@@ -95,6 +96,7 @@ mkdir /var/lib/redis
 chown redis:redis /var/lib/redis
 chmod 770 /var/lib/redis
 cp /tmp/redis-conf/redis.service /etc/systemd/system/redis.service
+# shellcheck disable=SC2024
 sudo echo -n > /etc/redis/redis.confe
 echo "maxmemory 52mb" >> /etc/redis/redis.confe
 echo "maxmemory-policy allkeys_lfu" >> /etc/redis/redis.confe

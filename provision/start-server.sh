@@ -6,8 +6,6 @@ npm run build-ts
 
 pm2 start dist/server.js --watch
 
-sudo service mongod start
-
-npm update --force --no-bin-links
+#npm update --force --no-bin-links
 
 npm run build-ts &
