@@ -1,6 +1,6 @@
 import { Response, Request  } from "express";
 
-export const index = (req: Request, res: Response) => {
+const Index = (req: Request, res: Response) => {
     res.json(
         {
             status: 1,
@@ -9,3 +9,5 @@ export const index = (req: Request, res: Response) => {
         }
     );
 };
+
+export default Index;

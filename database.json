@@ -1,0 +1,11 @@
+{
+  "defaultEnv": "pg",
+  "pg": {
+    "driver": "pg",
+    "user": "vagrant",
+    "password": "vagrant",
+    "host": "localhost",
+    "database": "portfolio",
+    "port": "5432"
+  }
+}

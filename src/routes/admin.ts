@@ -8,6 +8,6 @@ adminRouter.get('/', adminController.index);
 adminRouter.get('/pages', pagesController.list);
 adminRouter.post('/pages', pagesController.add);
 adminRouter.put('/pages', pagesController.edit);
-adminRouter.delete('/pages', pagesController.delet);
+adminRouter.delete('/pages', () => {});
 
 export default adminRouter;
